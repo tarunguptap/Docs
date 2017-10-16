@@ -1,0 +1,52 @@
+===================================================================================================================
+Query to find the parent record when child record of particular type doesnot exists/missing among the child records
+===================================================================================================================
+
+1. Consider the below structure
+ref_department
+deptid createddate type      active
+1      now()       History     true
+2      now()       Physics     true
+3      now()       Maths       fasle
+
+ref_employee
+empid deptid  emptype
+101      1     REGULAR
+102      1     SALARIED
+103      1     FULLTIME
+104      1     CONTRACT     
+105      2     REGULAR
+106      2     SALARIED
+107      2     FULLTIME
+108      3     FULLTIME
+
+To find all those department, which doesn't have the CONTRACT type employee
+select deptid from ref_department dept where not exists (select 1 from ref_employee emp where emp.deptid = dept.deptid and emp.emptype='CONTRACT') and dept.active=true;
+
+2. Consider the below structure
+
+ref_department
+deptid createddate type      active
+1      now()       History     true
+2      now()       Physics     true
+3      now()       Maths       fasle
+
+ref_department_salary_scale
+deptsalid deptid scale
+101        1      10000
+201        2      15000
+301        3      20000
+
+ref_employee
+empid deptsalid  emptype
+101      101     REGULAR
+102      101     SALARIED
+103      101     FULLTIME
+104      101     CONTRACT     
+105      201     REGULAR
+106      201     SALARIED
+107      201     FULLTIME
+108      301     FULLTIME
+
+select deptid from ref_department dept where not exists (select 1 from ref_department_salary_scale dss join ref_employee emp on dss.deptsalid= emp.deptsalid where dept.deptid= dss.deptid and emp.emptype = 'CONTRACT') and dept.active = true;
+
